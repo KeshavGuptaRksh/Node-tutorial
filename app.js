@@ -1,52 +1,23 @@
-const http = require('http')
-const { readFileSync } = require('fs')
+const express = require('express')
+const app = express()
 
-// get all files
-const homePage = readFileSync('./navbar-app/index.html')
-const homeStyles = readFileSync('./navbar-app/styles.css')
-const homeImage = readFileSync('./navbar-app/logo.svg')
-const homeLogic = readFileSync('./navbar-app/browser-app.js')
+//  req => middleware => res
 
-const server = http.createServer((req, res) => {
-  // console.log(req.method)
+const logger = (req, res, next) => {
+  const method = req.method
   const url = req.url
-  console.log(url)
-  // home page
-  if (url === '/') {
-    res.writeHead(200, { 'content-type': 'text/html' })
-    res.write(homePage)
-    res.end()
-  }
-  // about page
-  //else if (url === '/about') {
-  //  res.writeHead(200, { 'content-type': 'text/html' })
-  //  res.write('<h1>about page</h1>')
-  //  res.end()
-  //}
-  //// styles
-  //else if (url === '/styles.css') {
-  //  res.writeHead(200, { 'content-type': 'text/css' })
-  //  res.write(homeStyles)
-  //  res.end()
-  //}
-  //// image/logo
-  //else if (url === '/logo.svg') {
-  //  res.writeHead(200, { 'content-type': 'image/svg+xml' })
-  //  res.write(homeImage)
-  //  res.end()
-  //}
-  //// logic
-  //else if (url === '/browser-app.js') {
-  //  res.writeHead(200, { 'content-type': 'text/javascript' })
-  //  res.write(homeLogic)
-  //  res.end()
-  //}
-  // 404
-  else {
-    res.writeHead(404, { 'content-type': 'text/html' })
-    res.write('<h1>page not found</h1>')
-    res.end()
-  }
+  const time = new Date().getFullYear()
+  console.log(method, url, time)
+  next()
+}
+
+app.get('/', logger, (req, res) => {
+  res.send('Home')
+})
+app.get('/about', logger, (req, res) => {
+  res.send('About')
 })
 
-server.listen(5000)
+app.listen(5000, () => {
+  console.log('Server is listening on port 5000....')
+})
